@@ -109,16 +109,18 @@ class DSMRMeter(threading.Thread):
 
             # Format and push the telegram onto the queue so other threads can pick it up
             if valid_telegram:
-                # Format: [prefix, topic, tag, value, messagerate] (list)
+                # Format: [prefix, topic, tag, value, messagerate, datatype] (list)
                 prefix = 'dsmr'
                 topic = identified_telegram[datadefinitions.MQTT_TOPIC]
                 tag = identified_telegram[datadefinitions.MQTT_TAG]
-                val = str(tgr_val)
+
                 message_rate = identified_telegram[datadefinitions.MESSAGERATE]
+                datatype = identified_telegram[datadefinitions.DATATYPE]
+                val = eval(datatype)(tgr_val)
                 self.queue.put([prefix, topic, tag, val, message_rate])
 
     def run(self):
-        logging.info("Starting P1 SmartMeter thread")
+        logging.info("--- Starting P1 SmartMeter thread ---")
         while True:
             telegram = self.read_telegram()
             telegram_list = telegram.splitlines()

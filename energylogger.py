@@ -48,7 +48,7 @@ def check_config():
 
 def main():
     # Set up logging
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     logging.info('Welcome to EnergyLogger --- Starting threads')
 
     # Check config, if config is invalid, exit.
@@ -66,9 +66,18 @@ def main():
         _config['MQTT']['Password'],
         'solar_pi'
     )
+    t_influx = dataloggers.InfluxLogger(
+        # queue, url, token, org, bucket_id
+        _q,
+        _config['INFLUXDB']['url'],
+        _config['INFLUXDB']['token'],
+        _config['INFLUXDB']['org'],
+        _config['INFLUXDB']['bucketid'],
+    )
     t_dsmr = smartmeter.DSMRMeter(_q, _config['DEVICES']['dsmrport'])
 
     t_mqtt.start()
+    t_influx.start()
     t_dsmr.start()
 
 
