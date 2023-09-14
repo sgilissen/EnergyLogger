@@ -6,6 +6,7 @@ import configparser
 
 import dataloggers
 from devices.dsmr import smartmeter
+from devices.sun2000 import sun2000
 
 _config = configparser.ConfigParser()
 
@@ -48,7 +49,7 @@ def check_config():
 
 def main():
     # Set up logging
-    logging.basicConfig(level=logging.INFO, encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    logging.basicConfig(level=logging.INFO, encoding='utf-8', format='%(asctime)s: [%(module)s]: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     logging.info('Welcome to EnergyLogger --- Starting threads')
 
     # Check config, if config is invalid, exit.
@@ -75,10 +76,12 @@ def main():
         _config['INFLUXDB']['bucketid'],
     )
     t_dsmr = smartmeter.DSMRMeter(_q, _config['DEVICES']['dsmrport'])
+    t_sun2000 = sun2000.Sun2000(_q, _config['DEVICES']['SUN2KPort'])
 
     t_mqtt.start()
     t_influx.start()
     t_dsmr.start()
+    t_sun2000.start()
 
 
 if __name__ == "__main__":

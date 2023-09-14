@@ -85,7 +85,7 @@ class DSMRMeter(threading.Thread):
 
     def parse_telegram(self, telegram):
         if telegram != '':
-            logging.debug(f'Telegram received: {telegram}')
+            logging.debug(f'Parsing DSMR telegram...')
             identified_telegram, value = datadefinitions.identify_telegram(telegram)
             tgr_desc = identified_telegram[datadefinitions.DESCRIPTION]
             tgr_val_search = re.search(identified_telegram[datadefinitions.REGEX], value)
@@ -120,7 +120,7 @@ class DSMRMeter(threading.Thread):
                 self.queue.put([prefix, topic, tag, val, message_rate])
 
     def run(self):
-        logging.info("--- Starting P1 SmartMeter thread ---")
+        logging.info(f"Starting P1 SmartMeter (device on {self.serial_port})")
         while True:
             telegram = self.read_telegram()
             telegram_list = telegram.splitlines()

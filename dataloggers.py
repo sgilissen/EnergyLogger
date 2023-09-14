@@ -45,7 +45,7 @@ class InfluxLogger(threading.Thread):
         return p
 
     def run(self):
-        logger.info('--- Starting InfluxDB Logger ---')
+        logger.info('Starting InfluxDB Logger...')
         # Received format: [prefix, topic, key, value, messagerate] (list)
 
         # Set up a dict to hold temporary data (for timestamp purposes)
@@ -98,7 +98,11 @@ class MQTTLogger(threading.Thread):
 
     # MQTT callbacks
     def mqtt_on_connect(self, client, userdata, flags, rc):
-        logger.info(f'Connecting to MQTT server... Result: {rc}')
+        if rc == 0:
+            resultstr = "Success!"
+        else:
+            resultstr = f"Failed with result code {rc}"
+        logger.info(f'Connecting to MQTT server... Result: {resultstr}')
         # client.subscribe("$SYS/#")
 
     def mqtt_publish(self, client, topic, msg):
@@ -110,7 +114,7 @@ class MQTTLogger(threading.Thread):
             logger.warning(f'Unable to publish to MQTT topic {topic}! Message: {msg}')
 
     def run(self):
-        logger.info('--- Starting MQTT Logger ---')
+        logger.info('Starting MQTT Logger...')
         # Received format: [prefix, topic, tag, value, messagerate] (list)
 
         # Set up a dict to hold temporary data (for timestamp purposes)

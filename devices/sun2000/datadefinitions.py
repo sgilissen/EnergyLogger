@@ -1,4 +1,48 @@
-def get_device_status_string(self, status):
+"""
+DSMR Dictionary:
+dsmr version 5
+
+Adapted from https://raw.githubusercontent.com/hansij66/dsmr2mqtt/main/dsmr50.py
+
+index:
+[description, mqtt_topic, regex received data, datatype, multiply factor, maxrate]]
+
+INDEX = {
+  "DESCRIPTION",
+  "MQTT_TOPIC",
+  "MQTT_TAG",
+  "REGEX",
+  "DATATYPE",
+  "MULTIPLICATION",
+  "MAXRATE"
+}
+
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
+DESCRIPTION = 0       # Description, specify units of measure between []
+MQTT_TOPIC = 1        # MQTT base topic; will be packed in a json message
+MQTT_TAG = 2          # MQTT tag in json message; Need to be unique per topic
+REGEX = 3             # python regex to filter extract data from dsmr telegram
+DATATYPE = 4          # data type of data (int, float, str)
+DATAVALIDATION = 5    # "0" (zero allowed), "1" (zero not allowed); validate data range; ignore if not valid;
+MULTIPLICATION = 6    # In case of float of int, multiply factor (e.g. 1000 is unit is kW, and our messages are in W)
+MESSAGERATE = 0       # Maximum number of messages per hour (0: none, 1: 1 per hour, 3600: limit to 1 per second)
+
+
+def get_device_status_string(status):
     switcher = {
         0x0000: 'Standby: initializing',
         0x0001: 'Standby: detecting insulation resistance',
